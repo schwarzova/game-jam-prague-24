@@ -25,7 +25,8 @@
     "build": "node log.js build & vite build --config vite/config.prod.mjs",
     "dev-nolog": "vite --config vite/config.dev.mjs",
     "build-nolog": "vite build --config vite/config.prod.mjs",
-    "lint": "npm eslint --fix"
+    "lint": "npx eslint --fix \"src/**\"",
+    "prettier": "npx prettier . --write"
   },
   "dependencies": {
     "phaser": "^3.87.0",
@@ -40,6 +41,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "prettier": "3.4.1",
