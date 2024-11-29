@@ -72,6 +72,6 @@ export class Player extends Scene {
   }
 
   changeScene() {
-    this.scene.start('GameOver');
+    this.scene.start('Scene3');
   }
 }
