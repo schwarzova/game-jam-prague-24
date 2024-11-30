@@ -42,7 +42,7 @@ export class Room1 extends Scene {
       .setOrigin(1, 1);
     // Nakreslení cesty 0xff0000 transparent
     const rect3 = createRect(this, 200, 450, 800, 300);
-    const rect4 = createRect(this, 200, 250, 340, 400);
+    const rect4 = createRect(this, 0, 250, 340, 400);
 
     // Create the player character
     this.hero = this.physics.add.sprite(812, 484, 'hero').setOrigin(0.5, 0.9);

@@ -5,6 +5,7 @@ export function createRect(
   width: number,
   height: number,
 ): Phaser.GameObjects.Rectangle {
+  // TODO comment out color
   const rect = scene.add.rectangle(x, y, width, height, 0x00ff00).setOrigin(0);
   rect.setInteractive();
   return rect;
