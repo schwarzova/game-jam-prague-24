@@ -61,6 +61,8 @@ export function createNumberHelpers(
       if (code.text[4] === '*') {
         code.text = `${code.text[0]} ${code.text[2]} ${i + 1}`;
         // TODO NEW SCENE
+        scene.sound.add('codeWrong').play();
+        // scene.scene.start('Game');
         return;
       }
 

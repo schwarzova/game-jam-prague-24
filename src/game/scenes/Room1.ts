@@ -11,12 +11,20 @@ import {
   hideNumbers,
   showNumbers,
 } from '../helpers/room1/doorLock';
+import {
+  createHintImages,
+  createHints,
+  hideAllHintImages,
+  setHintsDisableInteractive,
+  setHintsInteractive,
+} from '../helpers/room1/hints';
 
 export class Room1 extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   cursors: Phaser.Types.Input.Keyboard.CursorKeys; // Type for the cursor keys
   hero: Phaser.Physics.Arcade.Sprite;
   target: Phaser.Math.Vector2;
+  eyes: Phaser.GameObjects.Image;
   // Dialog system
   dialogueText: Phaser.GameObjects.Text; // Text object for dialogue
   capeManDialogueText: Phaser.GameObjects.Text; // Text object for dialogue
@@ -31,27 +39,39 @@ export class Room1 extends Scene {
   }
 
   preload() {
-    // Load player image
+    // Background
     this.load.image(
       'backgroundRoom1',
       'assets/background/background_basement_flip.png',
     );
     this.load.image('sloup', 'assets/background/background-basement-sloup.png');
+    this.load.image('flower', 'assets/room1/kytka.png');
+    this.load.image('table', 'assets/room1/table.png');
+    // Characters
     this.load.spritesheet('hero', 'assets/hero/hero_sprite_sheet.png', {
       frameWidth: 300,
       frameHeight: 400,
     });
     this.load.image('capeMan', 'assets/dummy/capeMan.png');
     this.load.audio('capeManSound', 'assets/dummy/Room1CapeMan.mp3');
-    this.load.image('capeMan', 'assets/dummy/capeMan.png');
-    this.load.image('flower', 'assets/room1/kytka.png');
-    this.load.image('table', 'assets/room1/table.png');
-    this.load.image('doorlock', 'assets/room1/door_lock.png');
-    this.load.image('cross', 'assets/room1/exit.png');
     this.load.image('eyes', 'assets/room1/oci.png');
+    // Cursors
+    this.load.image('cursorRuka', 'assets/room1/cursor_ruka.png');
+    this.load.image('cursorBota', 'assets/room1/cursor_bota.png');
+    // Hints
+    this.load.image('cross', 'assets/room1/exit.png');
+    this.load.image('doorlock', 'assets/room1/door_lock.png');
+    this.load.image('canal', 'assets/room1/par_bot.png');
+    this.load.image('rope', 'assets/room1/rope.png');
+    // Music
+    this.load.audio('codeWrong', 'assets/music/wrongCode.mp3');
+    this.load.audio('bgMusic', 'assets/music/bgMusic.mp3');
   }
 
   create() {
+    // Add and play the background music
+    const music = this.sound.add('bgMusic', { loop: true, volume: 0.2 });
+
     this.isDark = true;
     this.add
       .image(3000, 768, 'backgroundRoom1')
@@ -62,10 +82,11 @@ export class Room1 extends Scene {
     const rect2 = createRect(this, 160, 380, 340, 400);
     const rect3 = createRect(this, 900, 300, 340, 200);
     const rect4 = createRect(this, 1240, 500, 200, 220);
-    const rect5 = createRect(this, 1240, 720, 1000, 45);
+    const rect5 = createRect(this, 1240, 720, 600, 45);
+    const rect55 = createRect(this, 1840, 660, 400, 150);
     const rect6 = createRect(this, 2090, 300, 400, 450);
     const rect7 = createRect(this, 2490, 400, 370, 300);
-    const rects = [rect1, rect2, rect3, rect4, rect5, rect6, rect7];
+    const rects = [rect1, rect2, rect3, rect4, rect5, rect55, rect6, rect7];
 
     // Create the player character
     this.hero = this.physics.add.sprite(150, 580, 'hero').setOrigin(0.5, 0.9);
@@ -74,29 +95,20 @@ export class Room1 extends Scene {
     this.add.image(900, 380, 'sloup');
     this.add.image(2620, 740, 'table');
     this.add.image(2400, 680, 'flower');
-    const blackBox = this.add.rectangle(0, 0, 1024, 768, 0x000000).setOrigin(0);
+    const blackBox = this.add.rectangle(0, 0, 3000, 768, 0x000000).setOrigin(0);
     const switchLightHelp = this.add.rectangle(50, 430, 10, 10, 0xffffff, 0.1);
-    const eyes = this.add.image(140, 390, 'eyes').setScale(0.8);
+    this.eyes = this.add.image(140, 390, 'eyes').setScale(0.8);
     const switchLight = this.add.rectangle(30, 410, 40, 40).setOrigin(0);
     switchLight.setInteractive();
-    const lock = this.add
-      .rectangle(2770, 190, 40, 50, 0x00ff00, 0.7)
-      .setOrigin(0);
-    lock.setInteractive();
     const capeMan = this.add.image(512, 384, 'capeMan').setVisible(false);
 
-    // Clickable hints details
-    const centerX = this.scale.width / 2;
-    const centerY = this.scale.height / 2;
-    const doorLock = this.add
-      .image(centerX, centerY, 'doorlock')
-      .setScrollFactor(0)
-      .setVisible(false);
+    const hintImages = createHintImages(this);
     const code = this.add
-      .text(2300, 220, '* * *', {
+      .text(350, 220, '* * *', {
         font: '38px Courier',
         color: '#00000',
       })
+      .setScrollFactor(0)
       .setVisible(false);
 
     const numbers = createNumberHelpers(this, code);
@@ -106,6 +118,18 @@ export class Room1 extends Scene {
       .setVisible(false)
       .setScrollFactor(0)
       .setInteractive();
+
+    const handleHintClick = (index: number) => {
+      if (index === 0) {
+        code.setVisible(true);
+        showNumbers(numbers);
+      }
+
+      hintImages[index].setVisible(true);
+      crossBtn.setVisible(true);
+      setAllDisableInteractive(rects);
+    };
+    const hints = createHints(this, handleHintClick);
 
     this.hero.anims.create({
       key: 'left',
@@ -143,6 +167,7 @@ export class Room1 extends Scene {
       'Hmm... kde to jsem?\nTo je divný místo...\nMěl bych se odsuď dostat.',
       this.dialogueText,
       capeMan,
+      music,
     );
     this.isSpeaking = true;
 
@@ -163,34 +188,33 @@ export class Room1 extends Scene {
         this.isDark = false;
         blackBox.setVisible(false);
         switchLightHelp.setVisible(false);
-        eyes.setVisible(false);
+        this.eyes.setVisible(false);
         setAllInteractive(rects);
+        setHintsInteractive(hints);
       } else {
         this.isDark = true;
         blackBox.setVisible(true);
         switchLightHelp.setVisible(true);
-        eyes.setVisible(true);
+        this.eyes.setVisible(true);
         setAllDisableInteractive(rects);
+        setHintsDisableInteractive(hints);
       }
     });
-
-    lock.on('pointerdown', () => {
-      // Door lock is open
-      doorLock.setVisible(true);
-      crossBtn.setVisible(true);
-      showNumbers(numbers);
-      code.setVisible(true);
-      lock.disableInteractive();
-
-      setAllDisableInteractive(rects);
+    switchLight.on('pointerover', () => {
+      this.input.setDefaultCursor(
+        'url(assets/room1/cursor_ruka.png) 32 32, auto',
+      );
+    });
+    switchLight.on('pointerout', () => {
+      this.input.setDefaultCursor('default');
     });
 
     crossBtn.on('pointerdown', () => {
-      doorLock.setVisible(false);
+      hideAllHintImages(hintImages);
       crossBtn.setVisible(false);
-      lock.setInteractive();
       hideNumbers(numbers);
       code.setVisible(false);
+      setHintsInteractive(hints);
       setAllInteractive(rects);
     });
 
@@ -202,6 +226,10 @@ export class Room1 extends Scene {
     line: string,
     dialogue: Phaser.GameObjects.Text,
     capeMan: Phaser.GameObjects.Image,
+    music:
+      | Phaser.Sound.NoAudioSound
+      | Phaser.Sound.HTML5AudioSound
+      | Phaser.Sound.WebAudioSound,
   ) {
     let charIndex = 0;
 
@@ -228,6 +256,7 @@ export class Room1 extends Scene {
           this.time.delayedCall(15000, () => {
             capeMan.setVisible(false);
             dialogue.text = '';
+            music.play();
           });
         }
       },
@@ -247,6 +276,8 @@ export class Room1 extends Scene {
     if (distance < 5) {
       this.hero.body?.stop(); // Zastavení
       this.hero.anims.play('idle', true);
+      this.eyes.setX(this.hero.x - 5);
+      this.eyes.setY(this.hero.y - 200);
     } else if (this.hero.x < this.target.x) {
       this.hero.anims.play('left', true);
       this.hero.setFlipX(true);
