@@ -10,7 +10,8 @@ export class Scene3 extends Scene {
   private trampoline!: Phaser.Physics.Arcade.StaticGroup;
   private player2!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-  private gameOver! = false;
+  private key!: Phaser.Physics.Arcade.Sprite; // Klíč jako sprite
+  private inventory: string[] = [];
 
   constructor() {
     //super('Scene3');
@@ -144,8 +145,49 @@ export class Scene3 extends Scene {
       undefined,
       this,
     );
+    // Přidání klíče
+    this.key = this.physics.add.sprite(300, 2600, 'key');
+    this.key.setBounce(0.5); // Klíč se může lehce odrážet
+    this.key.setCollideWorldBounds(true);
+
+    // Kolize klíče s platformami (aby klíč nespadl)
+    this.physics.add.collider(this.key, this.platforms);
+
+    // Kolize hráče s platformami
+    this.physics.add.collider(this.player2, this.platforms);
+
+    // Detekce sbírání klíče hráčem
+    this.physics.add.overlap(
+      this.player2,
+      this.key,
+      this.collectKey,
+      undefined,
+      this,
+    );
 
     EventBus.emit('current-scene-ready', this);
+  }
+
+  collectKey(
+    player: Phaser.Physics.Arcade.Sprite,
+    key: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    // Přidání klíče do inventáře
+    this.inventory.push('key');
+    console.log('Klíč sebrán! Inventář:', this.inventory);
+
+    // Odstranění klíče ze scény
+    key.destroy();
+
+    // Volitelně: přehraj zvuk nebo zobraz zprávu
+    this.add.text(player.x, player.y - 50, 'Klíč sebrán!', {
+      font: '16px Arial',
+      color: '#fff',
+    });
+    /* .setOrigin(0.5)
+            .setDepth(1)
+            .setAlpha(0)
+            .setInteractive();     */
   }
 
   onPlatformCollision(
