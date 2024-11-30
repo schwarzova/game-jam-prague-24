@@ -5,11 +5,8 @@ export function createRect(
   width: number,
   height: number,
 ): Phaser.GameObjects.Rectangle {
-  // TODO comment out color and opacity
-  const rect = scene.add
-    .rectangle(x, y, width, height, 0x00ff00, 0.7)
-    .setOrigin(0);
-  rect.setInteractive();
+  // TODO comment out color and opacity 0x00ff00, 0.7
+  const rect = scene.add.rectangle(x, y, width, height).setOrigin(0);
   return rect;
 }
 
@@ -28,7 +25,7 @@ export function handleRectClick(
 }
 
 export function handleRectOver(input: Phaser.Input.InputPlugin) {
-  input.setDefaultCursor('url(assets/dummy/stepsCursor.cur), pointer');
+  input.setDefaultCursor('url(assets/stepPointer.png) 32 32, auto');
 }
 
 export function handleRectOut(input: Phaser.Input.InputPlugin) {
@@ -50,5 +47,21 @@ export function setupMethodsAll(
     });
     rect.on('pointerover', () => handleRectOver(input));
     rect.on('pointerout', () => handleRectOut(input));
+  }
+}
+
+export function setAllInteractive(rects: Phaser.GameObjects.Rectangle[]) {
+  for (let index = 0; index < rects.length; index++) {
+    const rect = rects[index];
+    rect.setInteractive();
+  }
+}
+
+export function setAllDisableInteractive(
+  rects: Phaser.GameObjects.Rectangle[],
+) {
+  for (let index = 0; index < rects.length; index++) {
+    const rect = rects[index];
+    rect.disableInteractive();
   }
 }
