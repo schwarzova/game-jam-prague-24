@@ -128,32 +128,47 @@ export class Scene3 extends Scene {
     //  Input Events
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.physics.add.collider(this.player2, this.platforms);
-      // Kolize hráče s broken
-      this.physics.add.collider(this.player2, this.broken, this.onPlatformCollision, undefined, this);
-      // Kolize hráče s trampolínami
-      this.physics.add.collider(this.player2, this.trampoline, this.onTrampolineHit, undefined, this);
-
-      
-  
+    // Kolize hráče s broken
+    this.physics.add.collider(
+      this.player2,
+      this.broken,
+      this.onPlatformCollision,
+      undefined,
+      this,
+    );
+    // Kolize hráče s trampolínami
+    this.physics.add.collider(
+      this.player2,
+      this.trampoline,
+      this.onTrampolineHit,
+      undefined,
+      this,
+    );
 
     EventBus.emit('current-scene-ready', this);
   }
 
-onPlatformCollision(player: Phaser.Physics.Arcade.Sprite, platform: Phaser.Physics.Arcade.Sprite): void {
+  onPlatformCollision(
+    player: Phaser.Physics.Arcade.Sprite,
+    platform: Phaser.Physics.Arcade.Sprite,
+  ): void {
     // Spustí časovač, který platformu odstraní po 1 sekundě
     this.time.delayedCall(100, () => {
-        platform.destroy(); // Zničí platformu
+      platform.destroy(); // Zničí platformu
     });
-}
+  }
 
-    onTrampolineHit(player: Phaser.Physics.Arcade.Sprite, trampoline: Phaser.Physics.Arcade.Sprite): void {
-        // Nastavení větší vertikální rychlosti (odraz)
-        player.setVelocityY(-500); // Čím vyšší záporná hodnota, tím větší odraz
+  onTrampolineHit(
+    player: Phaser.Physics.Arcade.Sprite,
+    trampoline: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    // Nastavení větší vertikální rychlosti (odraz)
+    player.setVelocityY(-500); // Čím vyšší záporná hodnota, tím větší odraz
 
-        // Volitelně: vizuální efekt při odrazu
-        trampoline.setTint(0xff0000); // Změní barvu trampolíny na červenou
-        this.time.delayedCall(200, () => trampoline.clearTint()); // Po 200 ms vrátí původní barvu
-    }
+    // Volitelně: vizuální efekt při odrazu
+    trampoline.setTint(0xff0000); // Změní barvu trampolíny na červenou
+    this.time.delayedCall(200, () => trampoline.clearTint()); // Po 200 ms vrátí původní barvu
+  }
 
   update() {
     if (this.cursors.left.isDown) {
@@ -179,15 +194,14 @@ onPlatformCollision(player: Phaser.Physics.Arcade.Sprite, platform: Phaser.Physi
 
   platform(xs: number, ys: number, how: number, type: string) {
     for (let i = 0; i < how; i++) {
-        const x = xs + i * 32; // X souřadnice s odstupem 200 pixelů
-        if (type == 'broken_box') {
-            this.broken.create(x, ys, type);
-        } else if (type == 'trampoline') {
-            this.trampoline.create(x, ys, type);        
-        }else {
-            this.platforms.create(x, ys, type);
-        }
-      
+      const x = xs + i * 32; // X souřadnice s odstupem 200 pixelů
+      if (type == 'broken_box') {
+        this.broken.create(x, ys, type);
+      } else if (type == 'trampoline') {
+        this.trampoline.create(x, ys, type);
+      } else {
+        this.platforms.create(x, ys, type);
+      }
     }
   }
 
