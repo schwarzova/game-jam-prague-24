@@ -39,6 +39,6 @@ export class FirstCut extends Scene {
   }
 
   changeScene() {
-    this.scene.start('Game');
+    this.scene.start('Room1');
   }
 }
