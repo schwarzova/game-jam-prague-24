@@ -3,6 +3,7 @@ import { GameOver } from './scenes/GameOver';
 import { Game as MainGame } from './scenes/Game';
 import { FirstCut } from './scenes/FirstCut';
 import { Player } from './scenes/Player';
+import { Room1 } from './scenes/Room1';
 import { MainMenu } from './scenes/MainMenu';
 import { CANVAS, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
@@ -15,7 +16,16 @@ const config: Phaser.Types.Core.GameConfig = {
   height: 768,
   parent: 'game-container',
   backgroundColor: '#028af8',
-  scene: [Boot, Preloader, MainMenu, FirstCut, MainGame, Player, GameOver],
+  scene: [
+    Boot,
+    Preloader,
+    MainMenu,
+    FirstCut,
+    Room1,
+    MainGame,
+    Player,
+    GameOver,
+  ],
   physics: {
     default: 'arcade',
     arcade: {
