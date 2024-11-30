@@ -225,10 +225,8 @@ export class Scene3 extends Scene {
 
   playerDies(
     player: Phaser.Physics.Arcade.Sprite,
-    bat: Phaser.Physics.Arcade.Sprite,
+    // bat: Phaser.Physics.Arcade.Sprite,
   ): void {
-    console.log('Hráč zemřel!');
-
     // Zastavení hráče
     player.setTint(0xff0000); // Změní barvu hráče na červenou
     player.setVelocity(0, 0);
@@ -245,7 +243,6 @@ export class Scene3 extends Scene {
   ): void {
     // Přidání klíče do inventáře
     this.inventory.push('key');
-    console.log('Klíč sebrán! Inventář:', this.inventory);
 
     // Odstranění klíče ze scény
     key.destroy();
@@ -274,7 +271,7 @@ export class Scene3 extends Scene {
   }
 
   onPlatformCollision(
-    player: Phaser.Physics.Arcade.Sprite,
+    //player: Phaser.Physics.Arcade.Sprite,
     platform: Phaser.Physics.Arcade.Sprite,
   ): void {
     // Spustí časovač, který platformu odstraní po 1 sekundě
