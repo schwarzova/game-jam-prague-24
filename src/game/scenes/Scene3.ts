@@ -12,7 +12,6 @@ export class Scene3 extends Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private bats!: Phaser.Physics.Arcade.Group; // Skupina netopýrů
   private key!: Phaser.Physics.Arcade.Sprite; // Klíč jako sprite
-  private coins!: Phaser.Physics.Arcade.Group;
   private inventory: string[] = [];
 
   constructor() {
@@ -34,7 +33,6 @@ export class Scene3 extends Scene {
     this.load.image('trampoline', 'assets/trampoline.png');
     this.load.image('key', 'assets/key.png');
     this.load.image('back', 'assets/back.png');
-    this.load.image('coin', 'assets/room2/coin.png');
     this.load.spritesheet('bat', 'assets/room2/bat_sprite_sheet.png', {
       frameWidth: 100,
       frameHeight: 100,
@@ -268,7 +266,7 @@ export class Scene3 extends Scene {
 
   playerDies(
     player: Phaser.Physics.Arcade.Sprite,
-    bat: Phaser.Physics.Arcade.Sprite,
+    // bat: Phaser.Physics.Arcade.Sprite,
   ): void {
     //console.log('Hráč zemřel!');
 
@@ -317,7 +315,7 @@ export class Scene3 extends Scene {
   }
 
   onPlatformCollision(
-    player: Phaser.Physics.Arcade.Sprite,
+    //player: Phaser.Physics.Arcade.Sprite,
     platform: Phaser.Physics.Arcade.Sprite,
   ): void {
     // Spustí časovač, který platformu odstraní po 1 sekundě
