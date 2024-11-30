@@ -2,9 +2,7 @@ import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 
 export class Scene3 extends Scene {
-  private camera!: Phaser.Cameras.Scene2D.Camera;
   private background!: Phaser.GameObjects.TileSprite;
-  private gameText!: Phaser.GameObjects.Text;
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
   private broken!: Phaser.Physics.Arcade.StaticGroup;
   private trampoline!: Phaser.Physics.Arcade.StaticGroup;
@@ -12,6 +10,7 @@ export class Scene3 extends Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private bats!: Phaser.Physics.Arcade.Group; // Skupina netopýrů
   private key!: Phaser.Physics.Arcade.Sprite; // Klíč jako sprite
+  private coins!: Phaser.Physics.Arcade.Group;
   private inventory: string[] = [];
 
   constructor() {
@@ -31,8 +30,9 @@ export class Scene3 extends Scene {
     this.load.image('box', 'assets/box2.png');
     this.load.image('broken_box', 'assets/broken_box.png');
     this.load.image('trampoline', 'assets/trampoline.png');
-    this.load.image('key', 'assets/key.png');
+    this.load.image('key', 'assets/room2/key.png');
     this.load.image('back', 'assets/back.png');
+    this.load.image('coin', 'assets/room2/bullet.png');
     this.load.spritesheet('bat', 'assets/room2/bat_sprite_sheet.png', {
       frameWidth: 100,
       frameHeight: 100,
@@ -54,11 +54,11 @@ export class Scene3 extends Scene {
     // Přidání pozadí (výška světa 3000 px, pozadí musí být opakovatelné)
     this.background = this.add.tileSprite(512, 1500, 1024, 3000, 'back');
 
-      // Střely
-      this.coins = this.physics.add.group({
-          classType: Phaser.Physics.Arcade.Image,
-          runChildUpdate: true
-      });
+    // Střely
+    this.coins = this.physics.add.group({
+      classType: Phaser.Physics.Arcade.Image,
+      runChildUpdate: true,
+    });
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     this.platforms = this.physics.add.staticGroup();
@@ -164,7 +164,7 @@ export class Scene3 extends Scene {
       this,
     );
     // Přidání klíče
-    this.key = this.physics.add.sprite(300, 2600, 'key');
+    this.key = this.physics.add.sprite(300, 2000, 'key');
     this.key.setBounce(0.5); // Klíč se může lehce odrážet
     this.key.setCollideWorldBounds(true);
 
@@ -212,44 +212,53 @@ export class Scene3 extends Scene {
       this,
     );
 
-      // Kolize střel s netopýry
-      this.physics.add.overlap(this.coins, this.bats, this.hitBat, undefined, this);
+    // Kolize střel s netopýry
+    this.physics.add.overlap(
+      this.coins,
+      this.bats,
+      this.hitBat,
+      undefined,
+      this,
+    );
 
-      // Klávesnice pro ovládání
-      this.input.keyboard.on('keydown-SPACE', this.shootBullet, this);
+    // Klávesnice pro ovládání
+    this.input.keyboard.on('keydown-SPACE', this.shootBullet, this);
 
     EventBus.emit('current-scene-ready', this);
   }
-  
-    shootBullet(): void {
-        const bullet = this.coins.get() as Phaser.Physics.Arcade.Image;
-        if (bullet) {
-            bullet.setActive(true);
-            bullet.setVisible(true);
 
-            // Nastavení pozice střely podle hráče
-            bullet.setPosition(this.player2.x, this.player2.y);
+  shootBullet(): void {
+    const bullet = this.coins.get() as Phaser.Physics.Arcade.Image;
+    if (bullet) {
+      bullet.setActive(true);
+      bullet.setVisible(true);
 
-            // Vypnutí gravitace pro střelu
-            bullet.body.allowGravity = false;
-            bullet.setTexture('coin');
+      // Nastavení pozice střely podle hráče
+      bullet.setPosition(this.player2.x, this.player2.y);
 
-            // Směr střely
-            const direction = this.player2.flipX ? 1 : -1; // Pokud je hráč otočen doleva, střílí doleva
-            bullet.setVelocityX(300 * direction); // Střela letí doprava nebo doleva
-        }
+      // Vypnutí gravitace pro střelu
+      bullet.body.allowGravity = false;
+      bullet.setTexture('coin');
+
+      // Směr střely
+      const direction = this.player2.flipX ? 1 : -1; // Pokud je hráč otočen doleva, střílí doleva
+      bullet.setVelocityX(300 * direction); // Střela letí doprava nebo doleva
     }
-    
-    hitBat(bullet: Phaser.Physics.Arcade.Image, bat: Phaser.Physics.Arcade.Sprite): void {
-        // Kontrola, zda objekty stále existují
-        if (bullet.active && bat.active) {
-            bullet.destroy(); // Znič střelu
-            // Deaktivuj netopýra
-            bat.setActive(false);
-            bat.setVisible(false);
-            bat.body.enable = false; // Vypni fyziku
-        }
+  }
+
+  hitBat(
+    bullet: Phaser.Physics.Arcade.Image,
+    bat: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    // Kontrola, zda objekty stále existují
+    if (bullet.active && bat.active) {
+      bullet.destroy(); // Znič střelu
+      // Deaktivuj netopýra
+      bat.setActive(false);
+      bat.setVisible(false);
+      bat.body.enable = false; // Vypni fyziku
     }
+  }
 
   addRandomMovement(bat: Phaser.Physics.Arcade.Sprite): void {
     this.time.addEvent({
