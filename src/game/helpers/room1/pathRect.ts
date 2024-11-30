@@ -25,7 +25,7 @@ export function handleRectClick(
 }
 
 export function handleRectOver(input: Phaser.Input.InputPlugin) {
-  input.setDefaultCursor('url(assets/stepPointer.png) 32 32, auto');
+  input.setDefaultCursor('url(assets/room1/cursor_bota.png) 32 32, auto');
 }
 
 export function handleRectOut(input: Phaser.Input.InputPlugin) {
