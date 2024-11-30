@@ -26,7 +26,7 @@ export class Scene3 extends Scene {
         this.load.image('ground', 'assets/box.png');
         this.load.image('box', 'assets/box2.png');
         this.load.image('key', 'assets/key.png');
-        this.load.image('background', 'assets/back.png');
+        this.load.image('back', 'assets/back.png');
         this.load.spritesheet('dude', 'assets/dude.png',{ frameWidth: 32, frameHeight: 48 } );
     }
 
@@ -36,7 +36,8 @@ export class Scene3 extends Scene {
       this.cameras.main.setBounds(0, 0, 1024, 3000);
       this.physics.world.setBounds(0, 0, 1024, 3000);
       // Přidání pozadí (výška světa 3000 px, pozadí musí být opakovatelné)
-      this.background = this.add.tileSprite(512, 1500, 1024, 3000, 'background');
+      this.background = this.add.tileSprite(512, 1500, 1024, 3000, 'back');
+      //this.add.image(0, 2800, 'background');
 
       //  The platforms group contains the ground and the 2 ledges we can jump on
       this.platforms = this.physics.add.staticGroup();
