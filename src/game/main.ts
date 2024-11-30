@@ -25,8 +25,6 @@ const config: Phaser.Types.Core.GameConfig = {
     Room1,
     MainGame,
     Player,
-    MainGame,
-    Player,
     Scene3,
     GameOver,
   ],
