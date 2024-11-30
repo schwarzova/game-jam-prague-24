@@ -6,6 +6,8 @@ export class Scene3 extends Scene {
   private background!: Phaser.GameObjects.TileSprite;
   private gameText!: Phaser.GameObjects.Text;
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
+  private broken!: Phaser.Physics.Arcade.StaticGroup;
+  private trampoline!: Phaser.Physics.Arcade.StaticGroup;
   private player2!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private gameOver! = false;
@@ -25,6 +27,8 @@ export class Scene3 extends Scene {
   preload() {
     this.load.image('ground', 'assets/box.png');
     this.load.image('box', 'assets/box2.png');
+    this.load.image('broken_box', 'assets/broken_box.png');
+    this.load.image('trampoline', 'assets/trampoline.png');
     this.load.image('key', 'assets/key.png');
     this.load.image('back', 'assets/back.png');
     this.load.spritesheet('dude1', 'assets/dude.png', {
@@ -47,6 +51,8 @@ export class Scene3 extends Scene {
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     this.platforms = this.physics.add.staticGroup();
+    this.broken = this.physics.add.staticGroup();
+    this.trampoline = this.physics.add.staticGroup();
     // Generuji zem
     for (let i = 0; i < 32; i++) {
       const x = i * 32; // X souřadnice s odstupem 200 pixelů
@@ -83,7 +89,11 @@ export class Scene3 extends Scene {
     this.platform(520, 2400, 6, 'box');
     this.platform(120, 2500, 6, 'box');
     this.platform(520, 2600, 6, 'box');
-    this.platform(120, 2700, 6, 'box');
+    this.platform(150, 2650, 6, 'broken_box');
+    this.platform(220, 2700, 6, 'box');
+    this.platform(80, 2700, 2, 'box');
+    this.platform(90, 2673, 1, 'trampoline');
+    this.platform(750, 2750, 6, 'broken_box');
     this.platform(520, 2800, 6, 'box');
 
     this.player2 = this.physics.add.sprite(100, 2800, 'dude');
@@ -118,9 +128,32 @@ export class Scene3 extends Scene {
     //  Input Events
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.physics.add.collider(this.player2, this.platforms);
+      // Kolize hráče s broken
+      this.physics.add.collider(this.player2, this.broken, this.onPlatformCollision, undefined, this);
+      // Kolize hráče s trampolínami
+      this.physics.add.collider(this.player2, this.trampoline, this.onTrampolineHit, undefined, this);
+
+      
+  
 
     EventBus.emit('current-scene-ready', this);
   }
+
+onPlatformCollision(player: Phaser.Physics.Arcade.Sprite, platform: Phaser.Physics.Arcade.Sprite): void {
+    // Spustí časovač, který platformu odstraní po 1 sekundě
+    this.time.delayedCall(100, () => {
+        platform.destroy(); // Zničí platformu
+    });
+}
+
+    onTrampolineHit(player: Phaser.Physics.Arcade.Sprite, trampoline: Phaser.Physics.Arcade.Sprite): void {
+        // Nastavení větší vertikální rychlosti (odraz)
+        player.setVelocityY(-500); // Čím vyšší záporná hodnota, tím větší odraz
+
+        // Volitelně: vizuální efekt při odrazu
+        trampoline.setTint(0xff0000); // Změní barvu trampolíny na červenou
+        this.time.delayedCall(200, () => trampoline.clearTint()); // Po 200 ms vrátí původní barvu
+    }
 
   update() {
     if (this.cursors.left.isDown) {
@@ -146,8 +179,15 @@ export class Scene3 extends Scene {
 
   platform(xs: number, ys: number, how: number, type: string) {
     for (let i = 0; i < how; i++) {
-      const x = xs + i * 32; // X souřadnice s odstupem 200 pixelů
-      this.platforms.create(x, ys, type);
+        const x = xs + i * 32; // X souřadnice s odstupem 200 pixelů
+        if (type == 'broken_box') {
+            this.broken.create(x, ys, type);
+        } else if (type == 'trampoline') {
+            this.trampoline.create(x, ys, type);        
+        }else {
+            this.platforms.create(x, ys, type);
+        }
+      
     }
   }
 
