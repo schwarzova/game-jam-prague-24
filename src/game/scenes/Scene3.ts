@@ -10,6 +10,7 @@ export class Scene3 extends Scene {
   private trampoline!: Phaser.Physics.Arcade.StaticGroup;
   private player2!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  private bats!: Phaser.Physics.Arcade.Group; // Skupina netopýrů
   private key!: Phaser.Physics.Arcade.Sprite; // Klíč jako sprite
   private inventory: string[] = [];
 
@@ -32,6 +33,10 @@ export class Scene3 extends Scene {
     this.load.image('trampoline', 'assets/trampoline.png');
     this.load.image('key', 'assets/key.png');
     this.load.image('back', 'assets/back.png');
+    this.load.spritesheet('bat', 'assets/room2/bat_sprite_sheet.png', {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
     this.load.spritesheet('dude1', 'assets/dude.png', {
       frameWidth: 32,
       frameHeight: 48,
@@ -62,7 +67,7 @@ export class Scene3 extends Scene {
     }
     //this.platforms.create(0, 704, 'ground').setScale(2).refreshBody().setOrigin(0);
 
-    //  Now let's create some ledges
+    //  platormy
     this.platform(520, 400, 5, 'box');
     this.platform(50, 200, 5, 'box');
     this.platform(750, 220, 5, 'box');
@@ -108,6 +113,14 @@ export class Scene3 extends Scene {
       frames: this.anims.generateFrameNumbers('dude', { start: 1, end: 8 }),
       frameRate: 8,
       repeat: -1,
+    });
+
+    // Vytvoření animace netopýra
+    this.anims.create({
+      key: 'batFly',
+      frames: this.anims.generateFrameNumbers('bat', { start: 0, end: 3 }), // Snímky 0 až 3
+      frameRate: 10, // Počet snímků za sekundu
+      repeat: -1, // Animace se opakuje
     });
 
     this.player2.anims.create({
@@ -165,7 +178,65 @@ export class Scene3 extends Scene {
       this,
     );
 
+    // Vytvoření skupiny netopýrů
+    this.bats = this.physics.add.group({
+      key: 'bat',
+      repeat: 4, // Počet netopýrů
+      setXY: { x: 100, y: 1000, stepX: 200 }, // Rozmístění
+    });
+    this.physics.add.collider(this.bats, this.platforms);
+    // Přidání náhodného pohybu netopýrům
+    this.bats.children.iterate((bat) => {
+      const batSprite = bat as Phaser.Physics.Arcade.Sprite;
+      batSprite.setCollideWorldBounds(true);
+      batSprite.setBounce(1);
+      this.addRandomMovement(batSprite);
+
+      // Přehrání animace
+      batSprite.play('batFly');
+      // Vypnutí gravitace pro netopýra
+      batSprite.body.allowGravity = false;
+    });
+
+    // Detekce dotyku hráče s netopýry
+    this.physics.add.overlap(
+      this.player2,
+      this.bats,
+      this.playerDies,
+      undefined,
+      this,
+    );
+
     EventBus.emit('current-scene-ready', this);
+  }
+
+  addRandomMovement(bat: Phaser.Physics.Arcade.Sprite): void {
+    this.time.addEvent({
+      delay: 2000, // Každé 2 sekundy
+      callback: () => {
+        const randomX = Phaser.Math.Between(-200, 200);
+        const randomY = Phaser.Math.Between(-200, 200);
+        bat.setVelocity(randomX, randomY); // Nastaví náhodnou rychlost
+        //bat.setDrag(20, 20); // Přidání odporu pro ještě pomalejší pohyb
+      },
+      loop: true,
+    });
+  }
+
+  playerDies(
+    player: Phaser.Physics.Arcade.Sprite,
+    bat: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    console.log('Hráč zemřel!');
+
+    // Zastavení hráče
+    player.setTint(0xff0000); // Změní barvu hráče na červenou
+    player.setVelocity(0, 0);
+
+    // Restart hry po 2 sekundách
+    this.time.delayedCall(2000, () => {
+      this.scene.restart();
+    });
   }
 
   collectKey(
@@ -179,15 +250,27 @@ export class Scene3 extends Scene {
     // Odstranění klíče ze scény
     key.destroy();
 
-    // Volitelně: přehraj zvuk nebo zobraz zprávu
-    this.add.text(player.x, player.y - 50, 'Klíč sebrán!', {
-      font: '16px Arial',
-      color: '#fff',
+    // Zobrazení zprávy s fade-in efektem
+    const message = this.add
+      .text(player.x, player.y - 50, 'Klíč sebrán! A hurá pro ženu.', {
+        font: '16px Arial',
+        color: '#fff',
+      })
+      .setOrigin(0.5)
+      .setAlpha(0); // Začíná neviditelný (alpha = 0)
+
+    // Použití tween pro fade-in
+    this.tweens.add({
+      targets: message,
+      alpha: 1, // Alpha se zvýší na 1 (viditelný)
+      duration: 500, // Doba trvání efektu v ms
+      onComplete: () => {
+        // Po určité době text zmizí
+        this.time.delayedCall(1000, () => {
+          message.destroy(); // Odstranění textu
+        });
+      },
     });
-    /* .setOrigin(0.5)
-            .setDepth(1)
-            .setAlpha(0)
-            .setInteractive();     */
   }
 
   onPlatformCollision(
