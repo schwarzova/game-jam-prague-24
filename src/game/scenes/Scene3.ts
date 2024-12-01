@@ -450,7 +450,7 @@ export class Scene3 extends Scene {
       return;
     }
 
-    this.scene.start('MainMenu');
+    this.scene.start('Room4');
   }
 
   onPlatformCollision(
@@ -511,6 +511,6 @@ export class Scene3 extends Scene {
   }
 
   changeScene() {
-    this.scene.start('MainMenu');
+    this.scene.start('Room4');
   }
 }

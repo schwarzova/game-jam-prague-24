@@ -72,7 +72,7 @@ function App() {
             Change Scene
           </button>
         </div>
-        <div>
+        {/* <div>
           <button
             disabled={canMoveSprite}
             className="button"
@@ -89,7 +89,7 @@ function App() {
           <button className="button" onClick={addSprite}>
             Add New Sprite
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
