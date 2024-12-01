@@ -29,6 +29,7 @@ export class Preloader extends Scene {
     this.load.image('logo', 'logo.png');
     this.load.image('star', 'star.png');
     this.load.video('cutsceneVideo', 'cutScene.mp4');
+    this.load.video('doors_opening', 'doors_opening.mp4');
   }
 
   create() {

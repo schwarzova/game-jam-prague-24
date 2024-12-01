@@ -1,6 +1,7 @@
 import { Boot } from './scenes/Boot';
 import { FirstCut } from './scenes/FirstCut';
 import { Room1 } from './scenes/Room1';
+import { LoadingScene3 } from './scenes/LoadingScene3';
 import { Scene3 } from './scenes/Scene3';
 import { MainMenu } from './scenes/MainMenu';
 import { CANVAS, Game } from 'phaser';
@@ -14,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
   height: 768,
   parent: 'game-container',
   backgroundColor: '#028af8',
-  scene: [Boot, Preloader, MainMenu, FirstCut, Room1, Scene3],
+  scene: [Boot, Preloader, MainMenu, FirstCut, Room1, LoadingScene3, Scene3],
   physics: {
     default: 'arcade',
     arcade: {

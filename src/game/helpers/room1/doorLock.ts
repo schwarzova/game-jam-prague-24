@@ -63,7 +63,7 @@ export function createNumberHelpers(
         // TODO NEW SCENE
 
         if (code.text === '2 7 9') {
-          scene.scene.start('Scene3');
+          scene.scene.start('LoadingScene3');
           return;
         }
 
