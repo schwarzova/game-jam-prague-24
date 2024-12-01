@@ -72,6 +72,7 @@ export class Room1 extends Scene {
     this.load.image('roller', 'assets/room1/wheels_box.png');
     this.load.image('hand', 'assets/room1/hand.png');
     this.load.image('shelf', 'assets/room1/shelf.png');
+    this.load.image('bigMap1', 'assets/bigMap1.png');
     // Music
     this.load.audio('codeWrong', 'assets/music/wrongCode.mp3');
   }

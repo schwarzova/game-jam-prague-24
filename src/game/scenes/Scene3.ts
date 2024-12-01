@@ -11,6 +11,7 @@ export class Scene3 extends Scene {
   private bats!: Phaser.Physics.Arcade.Group; // Skupina netopýrů
   private key!: Phaser.Physics.Arcade.Sprite; // Klíč jako sprite
   private gun!: Phaser.Physics.Arcade.Sprite; // Zbran jako sprite
+  private map!: Phaser.Physics.Arcade.Sprite; // Door jako sprite
   private door!: Phaser.Physics.Arcade.Sprite; // Door jako sprite
   private coins!: Phaser.Physics.Arcade.Group;
   private shotsIndicator: Phaser.GameObjects.Image;
@@ -37,9 +38,11 @@ export class Scene3 extends Scene {
     this.load.image('trampoline', 'assets/trampoline.png');
     this.load.image('key', 'assets/room2/key.png');
     this.load.image('gun', 'assets/room2/gun.png');
+    this.load.image('map', 'assets/room2/map.png');
     this.load.image('door_scene3', 'assets/room2/doors.png');
     this.load.image('back', 'assets/back.png');
     this.load.image('coin', 'assets/room2/bullet.png');
+    this.load.image('bigMapRoom2', 'assets/bigMap2.png');
     this.load.spritesheet('bat', 'assets/room2/bat_sprite_sheet.png', {
       frameWidth: 100,
       frameHeight: 100,
@@ -128,7 +131,7 @@ export class Scene3 extends Scene {
     this.platform(520, 2800, 16, 'box');
     this.door = this.physics.add.sprite(50, 200, 'door_scene3');
 
-    this.player2 = this.physics.add.sprite(100, 400, 'dude');
+    this.player2 = this.physics.add.sprite(100, 2800, 'dude');
     this.showInitText();
 
     //  Player physics properties. Give the little guy a slight bounce.
@@ -218,6 +221,22 @@ export class Scene3 extends Scene {
       this.player2,
       this.gun,
       this.collectGun,
+      undefined,
+      this,
+    );
+
+    // Přidání Mapy
+    this.map = this.physics.add.sprite(950, 2600, 'map');
+    this.map.setBounce(0.5); // Mapa se může lehce odrážet
+    this.map.setCollideWorldBounds(true);
+
+    this.physics.add.collider(this.map, this.platforms);
+
+    // Detekce mapa s hráčem
+    this.physics.add.overlap(
+      this.player2,
+      this.map,
+      this.collectMap,
       undefined,
       this,
     );
@@ -420,6 +439,23 @@ export class Scene3 extends Scene {
           message.destroy(); // Odstranění textu
         });
       },
+    });
+  }
+
+  collectMap(
+    _player: Phaser.Physics.Arcade.Sprite,
+    map: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+
+    // Odstranění klíče ze scény
+    map.destroy();
+    const big = this.add
+      .image(centerX, centerY, 'bigMapRoom2')
+      .setScrollFactor(0);
+    this.time.delayedCall(4000, () => {
+      big.destroy(); // Odstranění textu
     });
   }
 
