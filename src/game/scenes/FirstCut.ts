@@ -23,7 +23,7 @@ export class FirstCut extends Scene {
     video.setDisplaySize(1024, 768); // Rozměry obrazovky
 
     video.on('complete', () => {
-      this.scene.start('Game'); // Spuštění další scény
+      this.scene.start('Room1'); // Spuštění další scény
     });
 
     const skipButton = this.add.image(1000, 750, 'skipButton').setInteractive(); // Tlačítko v pravém dolním rohu
@@ -32,7 +32,7 @@ export class FirstCut extends Scene {
     // Akce po kliknutí na tlačítko „Skip“
     skipButton.on('pointerdown', () => {
       video.stop(); // Zastaví video
-      this.scene.start('Game'); // Přechod na další scénu
+      this.scene.start('Room1'); // Přechod na další scénu
     });
 
     EventBus.emit('current-scene-ready', this);
