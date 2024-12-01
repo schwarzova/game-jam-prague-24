@@ -17,11 +17,18 @@ export class Room4 extends Scene {
     this.load.image('magnet', 'assets/room2/bullet.png'); // Obrázek magnetu
     this.load.image('key_room4', 'assets/room2/key.png');
     this.load.image('belt', 'path/to/belt.png'); // Obrázek pásu
+    this.load.image('bigMapRoom3', 'assets/bigMap3.png');
   }
 
   create() {
     // Grafika pro provaz
     this.rope = this.add.graphics();
+    this.showInitText();
+
+    const map = this.add
+      .rectangle(900, 140, 40, 40, 0x00ff00, 0.7)
+      .setOrigin(0);
+    map.setInteractive();
 
     // Přidání jeřábu na scénu
     this.crane = this.add.image(400, 50, 'crane');
@@ -62,6 +69,13 @@ export class Room4 extends Scene {
     // Poslech klávesy mezerník
     this.input?.keyboard?.on('keydown-SPACE', this.dropMagnet, this);
 
+    map.on('pointerdown', () => {
+      const big = this.add.image(512, 384, 'bigMapRoom3').setScrollFactor(0);
+      this.time.delayedCall(4000, () => {
+        big.destroy(); // Odstranění textu
+      });
+    });
+
     EventBus.emit('current-scene-ready', this);
   }
 
@@ -89,7 +103,7 @@ export class Room4 extends Scene {
     this.rope.clear();
 
     // Nakreslení provazu mezi jeřábem a magnetem
-    this.rope.lineStyle(2, 0xffffff, 1); // Bílá čára o šířce 2 px
+    this.rope.lineStyle(2, 0x000000, 1); // Bílá čára o šířce 2 px
     this.rope.beginPath();
     this.rope.moveTo(this.crane.x, this.crane.y); // Začátek u jeřábu
     this.rope.lineTo(this.magnet.x, this.magnet.y); // Konec u magnetu
@@ -121,13 +135,36 @@ export class Room4 extends Scene {
       const keySprite = key as Phaser.Physics.Arcade.Sprite;
       const len = this.keysGroup.getLength();
       keySprite.setVelocityX(len === 2 ? 250 : 350); // Klíče se pohybují po pásu
-      keySprite.se;
     });
 
     // Resetuj magnet do výchozí pozice
     this.isMagnetDropping = false;
     magnet.setVelocityY(0);
     magnet.y = this.crane.y + 50;
+  }
+
+  showInitText(): void {
+    // Zobrazení zprávy s fade-in efektem
+    const message = this.add
+      .text(800, 100, 'Dveře mají 3 zámky no super...', {
+        font: '16px Arial',
+        color: '#fff',
+      })
+      .setOrigin(0.5)
+      .setAlpha(0); // Začíná neviditelný (alpha = 0)
+
+    // Použití tween pro fade-in
+    this.tweens.add({
+      targets: message,
+      alpha: 1, // Alpha se zvýší na 1 (viditelný)
+      duration: 500, // Doba trvání efektu v ms
+      onComplete: () => {
+        // Po určité době text zmizí
+        this.time.delayedCall(1500, () => {
+          message.destroy(); // Odstranění textu
+        });
+      },
+    });
   }
 
   changeScene() {
