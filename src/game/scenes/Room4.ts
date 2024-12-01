@@ -13,36 +13,40 @@ export class Room4 extends Scene {
   }
 
   preload() {
+    this.load.image('brJerab', 'assets/room4/jerab_scene.png'); // Obrázek jeřábu
     this.load.image('crane', 'path/to/crane.png'); // Obrázek jeřábu
     this.load.image('magnet', 'assets/room2/bullet.png'); // Obrázek magnetu
     this.load.image('key_room4', 'assets/room2/key.png');
     this.load.image('belt', 'path/to/belt.png'); // Obrázek pásu
     this.load.image('bigMapRoom3', 'assets/bigMap3.png');
     this.load.image('sloupJerab', 'assets/room4/sloupJerab.png');
+    this.load.image('pas', 'assets/room4/pas.png');
+    this.load.image('mapJerab', 'assets/room2/map.png');
   }
 
   create() {
+    this.crane = this.add.image(350, 30, 'crane');
+    this.add.image(512, 384, 'brJerab');
     // Grafika pro provaz
     this.rope = this.add.graphics();
     this.showInitText();
 
-    const map = this.add
-      .rectangle(900, 140, 40, 40, 0x00ff00, 0.7)
-      .setOrigin(0);
+    this.add.image(932, 120, 'mapJerab');
+    const map = this.add.rectangle(910, 100, 40, 40).setOrigin(0);
     map.setInteractive();
 
     // Přidání jeřábu na scénu
-    this.crane = this.add.image(400, 50, 'crane');
-
-    // Přidání magnetu pod jeřáb
-    this.magnet = this.physics.add.image(400, 100, 'magnet').setRotation(4.7);
-    this.magnet.body.allowGravity = false;
 
     // Vytvoření pohyblivého pásu
     const conveyorBelt = this.physics.add.staticGroup();
     for (let i = 0; i < 10; i++) {
       conveyorBelt.create(i * 80, 650, 'belt');
     }
+
+    this.add.image(400, 640, 'pas').setScale(1.2);
+    // Přidání magnetu pod jeřáb
+    this.magnet = this.physics.add.image(400, 100, 'magnet').setRotation(4.7);
+    this.magnet.body.allowGravity = false;
 
     // Vytvoření klíčů na pásu
     this.keysGroup = this.physics.add.group({
@@ -59,7 +63,7 @@ export class Room4 extends Scene {
       keySprite.setBounce(1);
     });
 
-    this.add.image(915, 700, 'sloupJerab');
+    this.add.image(905, 720, 'sloupJerab').setScale(1.1);
 
     // Kolize magnetu s klíči
     this.physics.add.overlap(
@@ -78,6 +82,14 @@ export class Room4 extends Scene {
       this.time.delayedCall(4000, () => {
         big.destroy(); // Odstranění textu
       });
+    });
+    map.on('pointerover', () => {
+      this.input.setDefaultCursor(
+        'url(assets/room1/cursor_ruka.png) 32 32, auto',
+      );
+    });
+    map.on('pointerout', () => {
+      this.input.setDefaultCursor('default');
     });
 
     EventBus.emit('current-scene-ready', this);
@@ -150,9 +162,9 @@ export class Room4 extends Scene {
   showInitText(): void {
     // Zobrazení zprávy s fade-in efektem
     const message = this.add
-      .text(800, 100, 'Dveře mají 3 zámky no super...', {
-        font: '16px Arial',
-        color: '#fff',
+      .text(150, 100, 'Dveře mají 3 zámky no super...', {
+        font: '18px Arial',
+        color: '#000',
       })
       .setOrigin(0.5)
       .setAlpha(0); // Začíná neviditelný (alpha = 0)
@@ -164,7 +176,7 @@ export class Room4 extends Scene {
       duration: 500, // Doba trvání efektu v ms
       onComplete: () => {
         // Po určité době text zmizí
-        this.time.delayedCall(1500, () => {
+        this.time.delayedCall(3000, () => {
           message.destroy(); // Odstranění textu
         });
       },

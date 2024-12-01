@@ -80,19 +80,6 @@ export class Scene3 extends Scene {
       const y = 2970; // Y souřadnice (stejná výška)
       this.platforms.create(x, y, 'ground').setScale(2).refreshBody();
     }
-
-    this.shotsIndicator = this.add
-      .image(1010, 750, 'coin')
-      .setScrollFactor(0)
-      .setScale(2)
-      .setVisible(false);
-    this.shotsNum = this.add
-      .text(946, 740, '', {
-        font: '24px Courier',
-        color: '#ffffff',
-      })
-      .setScrollFactor(0)
-      .setVisible(false);
     //this.platforms.create(0, 704, 'ground').setScale(2).refreshBody().setOrigin(0);
 
     //  platormy
@@ -130,6 +117,18 @@ export class Scene3 extends Scene {
     this.platform(450, 2550, 10, 'broken_box');
     this.platform(520, 2800, 16, 'box');
     this.door = this.physics.add.sprite(50, 200, 'door_scene3');
+    this.shotsIndicator = this.add
+      .image(1010, 750, 'coin')
+      .setScrollFactor(0)
+      .setScale(2)
+      .setVisible(false);
+    this.shotsNum = this.add
+      .text(946, 740, '', {
+        font: '24px Courier',
+        color: '#ffffff',
+      })
+      .setScrollFactor(0)
+      .setVisible(false);
 
     this.player2 = this.physics.add.sprite(100, 2800, 'dude');
     this.showInitText();

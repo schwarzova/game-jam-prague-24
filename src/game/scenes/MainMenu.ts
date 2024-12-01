@@ -14,7 +14,7 @@ export class MainMenu extends Scene {
 
   create() {
     // Přidání videa na scénu Střed obrazovky
-    const video = this.add.video(0, 0, 'cutsceneVideo');
+    const video = this.add.video(0, 0, 'mainMenuVideo');
 
     // Align the video to the top-left corner
     video.setOrigin(0, 0);
