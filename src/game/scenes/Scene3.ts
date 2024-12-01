@@ -128,6 +128,7 @@ export class Scene3 extends Scene {
     this.platform(520, 2800, 16, 'box');
 
     this.player2 = this.physics.add.sprite(100, 2800, 'dude');
+    this.showInitText();
 
     //  Player physics properties. Give the little guy a slight bounce.
     this.player2.setBounce(0.2);
@@ -400,6 +401,30 @@ export class Scene3 extends Scene {
     // Zobrazení zprávy s fade-in efektem
     const message = this.add
       .text(player.x, player.y - 50, 'Teď můžu střílet!\n(Mezerník)', {
+        font: '16px Arial',
+        color: '#fff',
+      })
+      .setOrigin(0.5)
+      .setAlpha(0); // Začíná neviditelný (alpha = 0)
+
+    // Použití tween pro fade-in
+    this.tweens.add({
+      targets: message,
+      alpha: 1, // Alpha se zvýší na 1 (viditelný)
+      duration: 500, // Doba trvání efektu v ms
+      onComplete: () => {
+        // Po určité době text zmizí
+        this.time.delayedCall(1500, () => {
+          message.destroy(); // Odstranění textu
+        });
+      },
+    });
+  }
+
+  showInitText(): void {
+    // Zobrazení zprávy s fade-in efektem
+    const message = this.add
+      .text(200, 2800, 'Sakra, musím vyskákat až nahoru.', {
         font: '16px Arial',
         color: '#fff',
       })
