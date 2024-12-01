@@ -52,7 +52,7 @@ export class Room1 extends Scene {
       frameWidth: 300,
       frameHeight: 400,
     });
-    this.load.image('capeMan', 'assets/dummy/capeMan.png');
+    this.load.image('capeMan', 'assets/snb-filter.png');
     this.load.audio('capeManSound', 'assets/dummy/Room1CapeMan.mp3');
     this.load.image('eyes', 'assets/room1/oci.png');
     // Cursors
@@ -81,6 +81,7 @@ export class Room1 extends Scene {
     const music = this.sound.add('bgMusic', { loop: true, volume: 0.2 });
 
     this.isDark = true;
+    this.isSpeaking = true;
     this.add
       .image(3000, 768, 'backgroundRoom1')
       .setScrollFactor(1)
@@ -104,7 +105,9 @@ export class Room1 extends Scene {
     this.add.image(2620, 740, 'table');
     this.add.image(2400, 680, 'flower');
     const blackBox = this.add.rectangle(0, 0, 3000, 768, 0x000000).setOrigin(0);
-    const switchLightHelp = this.add.rectangle(50, 430, 10, 10, 0xffffff, 0.1);
+    const switchLightHelp = this.add
+      .rectangle(50, 430, 10, 10, 0xffffff, 0.1)
+      .setVisible(false);
     this.eyes = this.add.image(140, 390, 'eyes').setScale(0.8);
     const switchLight = this.add.rectangle(30, 410, 40, 40).setOrigin(0);
     switchLight.setInteractive();
@@ -165,7 +168,7 @@ export class Room1 extends Scene {
       font: '24px Courier',
       color: '#ffffff',
     });
-    this.capeManDialogueText = this.add.text(10, 700, '', {
+    this.capeManDialogueText = this.add.text(200, 700, '', {
       font: '24px Courier',
       color: '#780606',
     });
@@ -176,6 +179,7 @@ export class Room1 extends Scene {
       this.dialogueText,
       capeMan,
       music,
+      switchLightHelp,
     );
     this.isSpeaking = true;
 
@@ -191,6 +195,9 @@ export class Room1 extends Scene {
     );
 
     switchLight.on('pointerdown', () => {
+      if (this.isSpeaking) {
+        return;
+      }
       // hide black box
       if (this.isDark) {
         this.isDark = false;
@@ -209,6 +216,11 @@ export class Room1 extends Scene {
       }
     });
     switchLight.on('pointerover', () => {
+      if (this.isSpeaking) {
+        this.input.setDefaultCursor('default');
+        return;
+      }
+
       this.input.setDefaultCursor(
         'url(assets/room1/cursor_ruka.png) 32 32, auto',
       );
@@ -238,6 +250,7 @@ export class Room1 extends Scene {
       | Phaser.Sound.NoAudioSound
       | Phaser.Sound.HTML5AudioSound
       | Phaser.Sound.WebAudioSound,
+    switchLightHelp: Phaser.GameObjects.Rectangle,
   ) {
     let charIndex = 0;
 
@@ -264,6 +277,8 @@ export class Room1 extends Scene {
           this.time.delayedCall(15000, () => {
             capeMan.setVisible(false);
             dialogue.text = '';
+            this.isSpeaking = false;
+            switchLightHelp.setVisible(true);
             music.play();
           });
         }
