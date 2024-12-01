@@ -23,7 +23,7 @@ function App() {
       <div>
         <div>
           <button className="button" onClick={changeScene}>
-            Change Scene
+            skip
           </button>
         </div>
         {/* <div>
