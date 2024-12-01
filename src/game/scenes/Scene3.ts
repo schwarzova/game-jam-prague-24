@@ -37,7 +37,7 @@ export class Scene3 extends Scene {
     this.load.image('trampoline', 'assets/trampoline.png');
     this.load.image('key', 'assets/room2/key.png');
     this.load.image('gun', 'assets/room2/gun.png');
-    this.load.image('door_scene3', 'assets/room2/door.png');
+    this.load.image('door_scene3', 'assets/room2/doors.png');
     this.load.image('back', 'assets/back.png');
     this.load.image('coin', 'assets/room2/bullet.png');
     this.load.spritesheet('bat', 'assets/room2/bat_sprite_sheet.png', {
@@ -126,8 +126,9 @@ export class Scene3 extends Scene {
     this.platform(90, 2673, 1, 'trampoline');
     this.platform(450, 2550, 10, 'broken_box');
     this.platform(520, 2800, 16, 'box');
+    this.door = this.physics.add.sprite(50, 200, 'door_scene3');
 
-    this.player2 = this.physics.add.sprite(100, 2800, 'dude');
+    this.player2 = this.physics.add.sprite(100, 400, 'dude');
     this.showInitText();
 
     //  Player physics properties. Give the little guy a slight bounce.
@@ -222,7 +223,6 @@ export class Scene3 extends Scene {
     );
 
     // Přidání Dveří
-    this.door = this.physics.add.sprite(50, 200, 'door_scene3');
     this.door.setBounce(0.5); // Klíč se může lehce odrážet
     this.door.setCollideWorldBounds(true);
 
@@ -343,6 +343,8 @@ export class Scene3 extends Scene {
     // Zastavení hráče
     player.setTint(0xff0000); // Změní barvu hráče na červenou
     player.setVelocity(0, 0);
+    this.inventory = [];
+    this.shots = 0;
 
     // Restart hry po 2 sekundách
     this.time.delayedCall(2000, () => {

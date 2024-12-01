@@ -311,6 +311,6 @@ export class Room1 extends Scene {
   }
 
   changeScene() {
-    this.scene.start('Scene3');
+    this.scene.start('LoadingScene3');
   }
 }
