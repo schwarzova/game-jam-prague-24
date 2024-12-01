@@ -10,8 +10,13 @@ export class Scene3 extends Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private bats!: Phaser.Physics.Arcade.Group; // Skupina netopýrů
   private key!: Phaser.Physics.Arcade.Sprite; // Klíč jako sprite
+  private gun!: Phaser.Physics.Arcade.Sprite; // Zbran jako sprite
+  private door!: Phaser.Physics.Arcade.Sprite; // Door jako sprite
   private coins!: Phaser.Physics.Arcade.Group;
+  private shotsIndicator: Phaser.GameObjects.Image;
+  private shotsNum: Phaser.GameObjects.Text;
   private inventory: string[] = [];
+  private shots: number = 0;
 
   constructor() {
     //super('Scene3');
@@ -31,6 +36,8 @@ export class Scene3 extends Scene {
     this.load.image('broken_box', 'assets/broken_box.png');
     this.load.image('trampoline', 'assets/trampoline.png');
     this.load.image('key', 'assets/room2/key.png');
+    this.load.image('gun', 'assets/room2/gun.png');
+    this.load.image('door_scene3', 'assets/room2/door.png');
     this.load.image('back', 'assets/back.png');
     this.load.image('coin', 'assets/room2/bullet.png');
     this.load.spritesheet('bat', 'assets/room2/bat_sprite_sheet.png', {
@@ -70,42 +77,55 @@ export class Scene3 extends Scene {
       const y = 2970; // Y souřadnice (stejná výška)
       this.platforms.create(x, y, 'ground').setScale(2).refreshBody();
     }
+
+    this.shotsIndicator = this.add
+      .image(1010, 750, 'coin')
+      .setScrollFactor(0)
+      .setScale(2)
+      .setVisible(false);
+    this.shotsNum = this.add
+      .text(946, 740, '', {
+        font: '24px Courier',
+        color: '#ffffff',
+      })
+      .setScrollFactor(0)
+      .setVisible(false);
     //this.platforms.create(0, 704, 'ground').setScale(2).refreshBody().setOrigin(0);
 
     //  platormy
-    this.platform(520, 400, 5, 'box');
     this.platform(50, 200, 5, 'box');
-    this.platform(750, 220, 5, 'box');
-    this.platform(300, 300, 7, 'box');
+    this.platform(750, 420, 5, 'box');
+    this.platform(300, 300, 7, 'broken_box');
     this.platform(50, 400, 3, 'box');
     this.platform(120, 500, 6, 'box');
-    this.platform(520, 600, 6, 'box');
+    this.platform(520, 600, 4, 'box');
     this.platform(120, 700, 6, 'box');
     this.platform(520, 800, 6, 'box');
     this.platform(120, 900, 6, 'box');
     this.platform(520, 1000, 6, 'box');
+
     this.platform(120, 1100, 6, 'box');
     this.platform(520, 1200, 6, 'box');
     this.platform(120, 1300, 6, 'box');
     this.platform(520, 1400, 6, 'box');
     this.platform(120, 1500, 6, 'box');
     this.platform(520, 1600, 6, 'box');
-    this.platform(120, 1700, 6, 'box');
-    this.platform(520, 1800, 6, 'box');
+    this.platform(120, 1700, 10, 'broken_box');
+
+    this.platform(920, 1700, 10, 'box');
+    this.platform(720, 1850, 1, 'box');
+    this.platform(650, 1950, 1, 'box');
+    this.platform(580, 2050, 1, 'box');
+    this.platform(450, 2150, 1, 'box');
     this.platform(120, 1900, 6, 'box');
-    this.platform(520, 2000, 6, 'box');
-    this.platform(120, 2100, 6, 'box');
-    this.platform(520, 2200, 6, 'box');
+    this.platform(620, 2250, 10, 'broken_box');
+
     this.platform(120, 2300, 6, 'box');
     this.platform(520, 2400, 6, 'box');
-    this.platform(120, 2500, 6, 'box');
-    this.platform(520, 2600, 6, 'box');
-    this.platform(150, 2650, 6, 'broken_box');
-    this.platform(220, 2700, 6, 'box');
-    this.platform(80, 2700, 2, 'box');
+    this.platform(80, 2700, 6, 'box');
     this.platform(90, 2673, 1, 'trampoline');
-    this.platform(750, 2750, 6, 'broken_box');
-    this.platform(520, 2800, 6, 'box');
+    this.platform(450, 2550, 10, 'broken_box');
+    this.platform(520, 2800, 16, 'box');
 
     this.player2 = this.physics.add.sprite(100, 2800, 'dude');
 
@@ -183,10 +203,44 @@ export class Scene3 extends Scene {
       this,
     );
 
+    // Přidání zbrane
+    this.gun = this.physics.add.sprite(950, 1650, 'gun');
+    this.gun.setBounce(0.5);
+    this.gun.setCollideWorldBounds(true);
+
+    // Kolize zbrane s platformami (aby zbran nespadla)
+    this.physics.add.collider(this.gun, this.platforms);
+
+    // Detekce sbírání zbrane hráčem
+    this.physics.add.overlap(
+      this.player2,
+      this.gun,
+      this.collectGun,
+      undefined,
+      this,
+    );
+
+    // Přidání Dveří
+    this.door = this.physics.add.sprite(50, 200, 'door_scene3');
+    this.door.setBounce(0.5); // Klíč se může lehce odrážet
+    this.door.setCollideWorldBounds(true);
+
+    // Kolize klíče s platformami (aby klíč nespadl)
+    this.physics.add.collider(this.door, this.platforms);
+
+    // Detekce dvere s hráčem
+    this.physics.add.overlap(
+      this.player2,
+      this.door,
+      this.goToDoor,
+      undefined,
+      this,
+    );
+
     // Vytvoření skupiny netopýrů
     this.bats = this.physics.add.group({
       key: 'bat',
-      repeat: 4, // Počet netopýrů
+      repeat: 6, // Počet netopýrů
       setXY: { x: 100, y: 1000, stepX: 200 }, // Rozmístění
     });
     this.physics.add.collider(this.bats, this.platforms);
@@ -228,6 +282,10 @@ export class Scene3 extends Scene {
   }
 
   shootBullet(): void {
+    if (!this.inventory.includes('gun') || this.shots === 0) {
+      return;
+    }
+
     const bullet = this.coins.get() as Phaser.Physics.Arcade.Image;
     if (bullet) {
       bullet.setActive(true);
@@ -243,6 +301,8 @@ export class Scene3 extends Scene {
       // Směr střely
       const direction = this.player2.flipX ? 1 : -1; // Pokud je hráč otočen doleva, střílí doleva
       bullet.setVelocityX(300 * direction); // Střela letí doprava nebo doleva
+      this.shots = this.shots - 1;
+      this.shotsNum.text = `# ${this.shots}`;
     }
   }
 
@@ -323,8 +383,53 @@ export class Scene3 extends Scene {
     });
   }
 
+  collectGun(
+    player: Phaser.Physics.Arcade.Sprite,
+    gun: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    // Přidání klíče do inventáře
+    this.inventory.push('gun');
+    this.shots = 7;
+    this.shotsIndicator.setVisible(true);
+    this.shotsNum.setVisible(true);
+    this.shotsNum.text = `# ${this.shots}`;
+
+    // Odstranění klíče ze scény
+    gun.destroy();
+
+    // Zobrazení zprávy s fade-in efektem
+    const message = this.add
+      .text(player.x, player.y - 50, 'Teď můžu střílet!\n(Mezerník)', {
+        font: '16px Arial',
+        color: '#fff',
+      })
+      .setOrigin(0.5)
+      .setAlpha(0); // Začíná neviditelný (alpha = 0)
+
+    // Použití tween pro fade-in
+    this.tweens.add({
+      targets: message,
+      alpha: 1, // Alpha se zvýší na 1 (viditelný)
+      duration: 500, // Doba trvání efektu v ms
+      onComplete: () => {
+        // Po určité době text zmizí
+        this.time.delayedCall(1500, () => {
+          message.destroy(); // Odstranění textu
+        });
+      },
+    });
+  }
+
+  goToDoor(): void {
+    if (!this.inventory.includes('key')) {
+      return;
+    }
+
+    this.scene.start('MainMenu');
+  }
+
   onPlatformCollision(
-    //player: Phaser.Physics.Arcade.Sprite,
+    _player: Phaser.Physics.Arcade.Sprite,
     platform: Phaser.Physics.Arcade.Sprite,
   ): void {
     // Spustí časovač, který platformu odstraní po 1 sekundě
