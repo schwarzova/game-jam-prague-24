@@ -128,7 +128,7 @@ export class Scene3 extends Scene {
     this.platform(520, 2800, 16, 'box');
     this.door = this.physics.add.sprite(50, 200, 'door_scene3');
 
-    this.player2 = this.physics.add.sprite(100, 400, 'dude');
+    this.player2 = this.physics.add.sprite(100, 2800, 'dude');
     this.showInitText();
 
     //  Player physics properties. Give the little guy a slight bounce.
