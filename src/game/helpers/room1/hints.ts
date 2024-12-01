@@ -69,6 +69,9 @@ export function createHints(
   const rope = {
     rect: createHint(scene, 200, 650, 80, 80),
   };
+  const map = {
+    rect: createHint(scene, 390, 80, 80, 80),
+  };
 
   const hints = [
     lock,
@@ -83,6 +86,7 @@ export function createHints(
     hand,
     shelf,
     rope,
+    map,
   ];
 
   const hintsRect = hints.map((h) => h.rect);
@@ -140,6 +144,7 @@ export function createHintImages(scene: Phaser.Scene) {
   const roller = createHintImage(scene, 'roller');
   const hand = createHintImage(scene, 'hand');
   const shelf = createHintImage(scene, 'shelf');
+  const map = createHintImage(scene, 'bigMap1');
 
   return [
     doorLock,
@@ -154,5 +159,6 @@ export function createHintImages(scene: Phaser.Scene) {
     hand,
     shelf,
     rope,
+    map,
   ];
 }
