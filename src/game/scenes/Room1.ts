@@ -63,9 +63,17 @@ export class Room1 extends Scene {
     this.load.image('doorlock', 'assets/room1/door_lock.png');
     this.load.image('canal', 'assets/room1/par_bot.png');
     this.load.image('rope', 'assets/room1/rope.png');
+    this.load.image('skrin', 'assets/room1/skrin.png');
+    this.load.image('flowers', 'assets/room1/kytka_detail.png');
+    this.load.image('bird', 'assets/room1/papagai.png');
+    this.load.image('birdBox', 'assets/room1/basa.png');
+    this.load.image('tableBox', 'assets/room1/box.png');
+    this.load.image('chemises', 'assets/room1/plaste.png');
+    this.load.image('roller', 'assets/room1/wheels_box.png');
+    this.load.image('hand', 'assets/room1/hand.png');
+    this.load.image('shelf', 'assets/room1/shelf.png');
     // Music
     this.load.audio('codeWrong', 'assets/music/wrongCode.mp3');
-    this.load.audio('bgMusic', 'assets/music/bgMusic.mp3');
   }
 
   create() {
@@ -164,7 +172,7 @@ export class Room1 extends Scene {
 
     // Start the dialogue
     this.typeText(
-      'Hmm... kde to jsem?\nTo je divný místo...\nMěl bych se odsuď dostat.',
+      'Auu... kde to jsem?\nTo je divný místo...\nMěl bych se odsuď dostat.',
       this.dialogueText,
       capeMan,
       music,
@@ -288,6 +296,6 @@ export class Room1 extends Scene {
   }
 
   changeScene() {
-    this.scene.start('Game');
+    this.scene.start('Scene3');
   }
 }

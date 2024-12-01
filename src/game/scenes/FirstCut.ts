@@ -11,16 +11,19 @@ export class FirstCut extends Scene {
   }
 
   preload() {
-    this.load.video('cutsceneVideo', 'assets/dummy/firstCut.mp4');
     this.load.image('skipButton', 'assets/dummy/skipButton.png');
+    this.load.audio('bgMusic', 'assets/music/bgMusic.mp3');
   }
 
   create() {
     // Přidání videa na scénu Střed obrazovky
-    const video = this.add.video(512, 334, 'cutsceneVideo');
+    const video = this.add.video(0, 0, 'cutsceneVideo');
 
+    // Align the video to the top-left corner
+    video.setOrigin(0, 0);
+
+    // Play the video
     video.play();
-    video.setDisplaySize(1024, 768); // Rozměry obrazovky
 
     video.on('complete', () => {
       this.scene.start('Room1'); // Spuštění další scény

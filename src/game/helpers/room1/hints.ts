@@ -131,19 +131,28 @@ export function createHintImages(scene: Phaser.Scene) {
   const doorLock = createHintImage(scene, 'doorlock');
   const canal = createHintImage(scene, 'canal');
   const rope = createHintImage(scene, 'rope');
+  const wardrobe = createHintImage(scene, 'skrin');
+  const flowers = createHintImage(scene, 'flowers');
+  const bird = createHintImage(scene, 'bird');
+  const birdBox = createHintImage(scene, 'birdBox');
+  const tableBox = createHintImage(scene, 'tableBox');
+  const chemises = createHintImage(scene, 'chemises');
+  const roller = createHintImage(scene, 'roller');
+  const hand = createHintImage(scene, 'hand');
+  const shelf = createHintImage(scene, 'shelf');
 
   return [
     doorLock,
     canal,
-    rope,
-    rope,
-    rope,
-    rope,
-    rope,
-    rope,
-    rope,
-    rope,
-    rope,
+    wardrobe,
+    flowers,
+    bird,
+    birdBox,
+    tableBox,
+    chemises,
+    roller,
+    hand,
+    shelf,
     rope,
   ];
 }

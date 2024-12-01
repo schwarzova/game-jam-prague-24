@@ -381,6 +381,6 @@ export class Scene3 extends Scene {
   }
 
   changeScene() {
-    this.scene.start('GameOver');
+    this.scene.start('MainMenu');
   }
 }
