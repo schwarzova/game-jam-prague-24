@@ -18,6 +18,7 @@ export class Room4 extends Scene {
     this.load.image('key_room4', 'assets/room2/key.png');
     this.load.image('belt', 'path/to/belt.png'); // Obrázek pásu
     this.load.image('bigMapRoom3', 'assets/bigMap3.png');
+    this.load.image('sloupJerab', 'assets/room4/sloupJerab.png');
   }
 
   create() {
@@ -34,7 +35,7 @@ export class Room4 extends Scene {
     this.crane = this.add.image(400, 50, 'crane');
 
     // Přidání magnetu pod jeřáb
-    this.magnet = this.physics.add.image(400, 100, 'magnet');
+    this.magnet = this.physics.add.image(400, 100, 'magnet').setRotation(4.7);
     this.magnet.body.allowGravity = false;
 
     // Vytvoření pohyblivého pásu
@@ -47,15 +48,18 @@ export class Room4 extends Scene {
     this.keysGroup = this.physics.add.group({
       key: 'key_room4',
       repeat: 2,
-      setXY: { x: 50, y: 600, stepX: 250 },
+      setXY: { x: 50, y: 600, stepX: 280 },
     });
 
     this.keysGroup.children.iterate((key) => {
       const keySprite = key as Phaser.Physics.Arcade.Sprite;
+      keySprite.setScale(0.8);
       keySprite.setVelocityX(150); // Klíče se pohybují po pásu
       keySprite.setCollideWorldBounds(true);
       keySprite.setBounce(1);
     });
+
+    this.add.image(915, 700, 'sloupJerab');
 
     // Kolize magnetu s klíči
     this.physics.add.overlap(
